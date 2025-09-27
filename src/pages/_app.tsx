@@ -1,6 +1,12 @@
-import "@/styles/globals.css";
 import type { AppProps } from "next/app";
+import "../mocks"; // enable axios-mock-adapter
+import { CssBaseline } from "@mui/material";
 
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </>
+  );
 }
