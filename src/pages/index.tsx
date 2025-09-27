@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { api } from "../api";
 import { Quiz } from "../models/quiz";
 import Link from "next/link";
-import AppLayout from "../components/layouts/AppLayout";
 import { Button, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import LocalDate from "@/components/ui/LocalDate";
+import PageLayout from "@/components/layouts/PageLayout";
 
 export default function QuizListPage() {
   const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes", []);
@@ -34,12 +34,14 @@ export default function QuizListPage() {
   };
 
   return (
-    <AppLayout>
-      <h1>Quizzes</h1>
-      <Button variant="contained" onClick={handleCreate} sx={{ mb: 2 }}>
-        Create Quiz
-      </Button>
-
+    <PageLayout
+      title="Quizzes"
+      actions={
+        <Button variant="contained" onClick={handleCreate}>
+          Create Quiz
+        </Button>
+      }
+    >
       <Table>
         <TableHead>
           <TableRow>
@@ -63,6 +65,6 @@ export default function QuizListPage() {
           ))}
         </TableBody>
       </Table>
-    </AppLayout>
+    </PageLayout>
   );
 }
