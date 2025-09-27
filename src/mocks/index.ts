@@ -2,13 +2,16 @@ import MockAdapter from "axios-mock-adapter";
 import {api} from "../api";
 import {Quiz} from "../models/quiz";
 import { config } from "process";
+import { loadQuizzes, saveQuizzes } from "./storage";
 
 const mock = new MockAdapter(api, {delayResponse: 500});
 
-let quizzes: Quiz[] = [];
+let quizzes: Quiz[] = loadQuizzes();
 
 // GET all quizzes
-mock.onGet("/quizzes").reply(200, quizzes);
+mock.onGet("/quizzes").reply(()=>{
+    return [200, quizzes];
+});
 
 // POST new quiz
 mock.onPost("/quizzes").reply((config) => {
@@ -21,6 +24,7 @@ mock.onPost("/quizzes").reply((config) => {
         ...JSON.parse(config.data),
     };
     quizzes.push(newQuiz);
+    saveQuizzes(quizzes);
     return [200, newQuiz];
 });
 
@@ -30,6 +34,7 @@ mock.onPut(/\/quizzes\/\d+/).reply((config) => {
     const idx = quizzes.findIndex((q)=> q.id === id);
     if(idx === -1) return [404];
     quizzes[idx] = { ...quizzes[idx], ...JSON.parse(config.data)};
+    saveQuizzes(quizzes);
     return [200, quizzes[idx]]
 });
 
