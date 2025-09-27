@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { api } from "../api";
 import { Quiz } from "../models/quiz";
 import Link from "next/link";
@@ -10,28 +10,27 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import LocalDate from "@/components/ui/LocalDate";
 
 export default function QuizListPage() {
-  const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes",[]);
+  const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes", []);
   const router = useRouter();
 
   useEffect(() => {
-    if(quizzes.length === 0){
-      
-    api
-      .get("/quizzes")
-      .then((res) => setQuizzes(res.data))
-      .catch(() => toast.error("Failed to load quizzes"));
+    if (quizzes.length === 0) {
+      api
+        .get("/quizzes")
+        .then((res) => setQuizzes(res.data))
+        .catch(() => toast.error("Failed to load quizzes"));
     }
-  }, [quizzes,setQuizzes]);
+  }, [quizzes, setQuizzes]);
 
   const handleCreate = async () => {
-   try{
-    const res = await api.post("/quizzes", { title: "New Quiz"});
-    setQuizzes((prev) => [...prev, res.data]);
-    toast.success("Quiz created successfully");
-    router.push(`/edit/${res.data.id}`)
-   }catch{
-    toast.error("Failed to create quiz");
-   }
+    try {
+      const res = await api.post("/quizzes", { title: "New Quiz" });
+      setQuizzes((prev) => [...prev, res.data]);
+      toast.success("Quiz created successfully");
+      router.push(`/edit/${res.data.id}`);
+    } catch {
+      toast.error("Failed to create quiz");
+    }
   };
 
   return (
@@ -53,7 +52,9 @@ export default function QuizListPage() {
           {quizzes.map((quiz) => (
             <TableRow key={quiz.id}>
               <TableCell>{quiz.title}</TableCell>
-              <TableCell ><LocalDate date={quiz.updatedAt} /></TableCell>
+              <TableCell>
+                <LocalDate date={quiz.updatedAt} />
+              </TableCell>
               <TableCell>
                 <Link href={`/edit/${quiz.id}`}>Edit</Link> |{" "}
                 <Link href={`/quiz/${quiz.id}`}>View</Link>
