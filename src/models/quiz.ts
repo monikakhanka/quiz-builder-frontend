@@ -1,19 +1,31 @@
-export type BlockType = "heading" | "question" | "button" | "footer";
-
-export type BlockContent =
-  | { text: string }
-  | { label: string }
-  | {
-      question: string;
-      options?: string[];
-      multiple?: boolean;
-    };
-
-export interface Block {
+export interface HeadingBlock {
   id: string;
-  type: BlockType;
-  content: BlockContent;
+  type: "heading";
+  content: { text: string };
 }
+export interface QuestionBlock {
+  id: string;
+  type: "question";
+  content: {
+    question: string;
+    options?: string[];
+    multiple?: boolean;
+  };
+}
+
+export interface ButtonBlock {
+  id: string;
+  type: "button";
+  content: { label: string };
+}
+
+export interface FooterBlock {
+  id: string;
+  type: "footer";
+  content: { text: string };
+}
+
+export type Block = HeadingBlock | QuestionBlock | ButtonBlock | FooterBlock;
 
 export interface Quiz {
   id: string;

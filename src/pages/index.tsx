@@ -16,7 +16,7 @@ export default function QuizListPage() {
   useEffect(() => {
     if (quizzes.length === 0) {
       api
-        .get("/quizzes")
+        .get<Quiz[]>("/quizzes")
         .then((res) => setQuizzes(res.data))
         .catch(() => toast.error("Failed to load quizzes"));
     }
@@ -24,7 +24,7 @@ export default function QuizListPage() {
 
   const handleCreate = async () => {
     try {
-      const res = await api.post("/quizzes", { title: "New Quiz" });
+      const res = await api.post<Quiz>("/quizzes", { title: "New Quiz" });
       setQuizzes((prev) => [...prev, res.data]);
       toast.success("Quiz created successfully");
       router.push(`/edit/${res.data.id}`);

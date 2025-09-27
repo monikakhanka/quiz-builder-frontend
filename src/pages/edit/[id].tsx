@@ -13,7 +13,7 @@ export default function QuizEditorPage() {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   useEffect(() => {
     if (id) {
-      api.get(`/quizzes/${id}`).then((res) => setQuiz(res.data));
+      api.get<Quiz>(`/quizzes/${id}`).then((res) => setQuiz(res.data));
     }
   }, [id]);
 
