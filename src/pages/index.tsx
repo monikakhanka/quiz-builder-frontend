@@ -1,46 +1,47 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { api } from "../api";
 import { Quiz } from "../models/quiz";
 import Link from "next/link";
-import AppLayout from "../components/layouts/AppLayout";
 import { Button, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import LocalDate from "@/components/ui/LocalDate";
+import PageLayout from "@/components/layouts/PageLayout";
 
 export default function QuizListPage() {
-  const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes",[]);
+  const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes", []);
   const router = useRouter();
 
   useEffect(() => {
-    if(quizzes.length === 0){
-      
-    api
-      .get("/quizzes")
-      .then((res) => setQuizzes(res.data))
-      .catch(() => toast.error("Failed to load quizzes"));
+    if (quizzes.length === 0) {
+      api
+        .get("/quizzes")
+        .then((res) => setQuizzes(res.data))
+        .catch(() => toast.error("Failed to load quizzes"));
     }
-  }, [quizzes,setQuizzes]);
+  }, [quizzes, setQuizzes]);
 
   const handleCreate = async () => {
-   try{
-    const res = await api.post("/quizzes", { title: "New Quiz"});
-    setQuizzes((prev) => [...prev, res.data]);
-    toast.success("Quiz created successfully");
-    router.push(`/edit/${res.data.id}`)
-   }catch{
-    toast.error("Failed to create quiz");
-   }
+    try {
+      const res = await api.post("/quizzes", { title: "New Quiz" });
+      setQuizzes((prev) => [...prev, res.data]);
+      toast.success("Quiz created successfully");
+      router.push(`/edit/${res.data.id}`);
+    } catch {
+      toast.error("Failed to create quiz");
+    }
   };
 
   return (
-    <AppLayout>
-      <h1>Quizzes</h1>
-      <Button variant="contained" onClick={handleCreate} sx={{ mb: 2 }}>
-        Create Quiz
-      </Button>
-
+    <PageLayout
+      title="Quizzes"
+      actions={
+        <Button variant="contained" onClick={handleCreate}>
+          Create Quiz
+        </Button>
+      }
+    >
       <Table>
         <TableHead>
           <TableRow>
@@ -53,7 +54,9 @@ export default function QuizListPage() {
           {quizzes.map((quiz) => (
             <TableRow key={quiz.id}>
               <TableCell>{quiz.title}</TableCell>
-              <TableCell ><LocalDate date={quiz.updatedAt} /></TableCell>
+              <TableCell>
+                <LocalDate date={quiz.updatedAt} />
+              </TableCell>
               <TableCell>
                 <Link href={`/edit/${quiz.id}`}>Edit</Link> |{" "}
                 <Link href={`/quiz/${quiz.id}`}>View</Link>
@@ -62,6 +65,6 @@ export default function QuizListPage() {
           ))}
         </TableBody>
       </Table>
-    </AppLayout>
+    </PageLayout>
   );
 }
