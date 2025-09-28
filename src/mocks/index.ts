@@ -7,12 +7,10 @@ const mock = new MockAdapter(api, { delayResponse: 500 });
 
 const quizzes: Quiz[] = loadQuizzes();
 
-// GET all quizzes
 mock.onGet("/quizzes").reply(() => {
   return [200, quizzes];
 });
 
-// POST new quiz
 mock.onPost("/quizzes").reply((config) => {
   const newQuiz: Quiz = {
     id: Date.now().toString(),
@@ -27,7 +25,6 @@ mock.onPost("/quizzes").reply((config) => {
   return [200, newQuiz];
 });
 
-// PUT update quiz
 mock.onPut(/\/quizzes\/\d+/).reply((config) => {
   const id = config.url!.split("/").pop();
   const idx = quizzes.findIndex((q) => q.id === id);
@@ -37,7 +34,6 @@ mock.onPut(/\/quizzes\/\d+/).reply((config) => {
   return [200, quizzes[idx]];
 });
 
-// GET single quiz
 mock.onGet(/\/quizzes\/\d+/).reply((config) => {
   const id = config.url!.split("/").pop();
   const quiz = quizzes.find((q) => q.id === id);
