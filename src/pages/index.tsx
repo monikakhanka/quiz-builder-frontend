@@ -22,6 +22,11 @@ export default function QuizListPage() {
     }
   }, [quizzes, setQuizzes]);
 
+  const saveToLocalStorage = (updatedQuizzes: Quiz[]) => {
+    setQuizzes(updatedQuizzes);
+    localStorage.setItem("quizzes", JSON.stringify(updatedQuizzes));
+  };
+
   const handleCreate = async () => {
     try {
       const res = await api.post<Quiz>("/quizzes", { title: "New Quiz" });
@@ -32,7 +37,11 @@ export default function QuizListPage() {
       toast.error("Failed to create quiz");
     }
   };
-
+  const handleDelete = (id: string) => {
+    if (!confirm("Are you sure you want to delete this quiz?")) return;
+    const updated = quizzes.filter((q) => q.id !== id);
+    saveToLocalStorage(updated);
+  };
   return (
     <PageLayout
       title="Quizzes"
@@ -59,7 +68,32 @@ export default function QuizListPage() {
               </TableCell>
               <TableCell>
                 <Link href={`/edit/${quiz.id}`}>Edit</Link> |{" "}
-                <Link href={`/quiz/${quiz.id}`}>View</Link>
+                <Link href={`/quiz/${quiz.id}`}>View</Link> |
+                <Button
+                  color="error"
+                  variant="text"
+                  onClick={() => handleDelete(quiz.id)}
+                  sx={{
+                    textTransform: "none",
+                    p: 0,
+                    minWidth: "auto",
+                    ml: 1,
+                    background: "none",
+                    textDecoration: "underline",
+                    "&:hover": {
+                      background: "none",
+                      textDecoration: "underline",
+                    },
+                    "&:active": {
+                      background: "none",
+                    },
+                    "&:focus": {
+                      background: "none",
+                    },
+                  }}
+                >
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))}

@@ -2,7 +2,7 @@ import { Box, Typography, Divider } from "@mui/material";
 import { ReactNode } from "react";
 
 type PageLayoutProps = {
-  title: string;
+  title: ReactNode;
   actions?: ReactNode;
   children: ReactNode;
 };

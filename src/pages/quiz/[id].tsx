@@ -4,7 +4,7 @@ import { api } from "../../api";
 import { Quiz } from "../../models/quiz";
 import PageLayout from "@/components/layouts/PageLayout";
 import { Box, Button, CircularProgress } from "@mui/material";
-import QuizContent from "@/components/quiz/QuizContent";
+import QuizContent from "@/components/quizViewer/QuizContent";
 
 export default function QuizRenderPage() {
   const router = useRouter();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Box, Button } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import PageLayout from "@/components/layouts/PageLayout";
 import { Quiz } from "@/models/quiz";
 import { api } from "@/api";
@@ -25,6 +25,10 @@ export default function QuizEditorPage() {
   const saveQuiz = async (updated: Quiz) => {
     const res = await api.put<Quiz>(`/quizzes/${updated.id}`, updated);
     setQuiz(res.data);
+
+    const quizzes = JSON.parse(localStorage.getItem("quizzes") || "[]");
+    const newQuizzes = quizzes.map((q: Quiz) => (q.id === updated.id ? res.data : q));
+    localStorage.setItem("quizzes", JSON.stringify(newQuizzes));
   };
 
   const handleSave = async () => {
@@ -43,7 +47,17 @@ export default function QuizEditorPage() {
 
   return (
     <PageLayout
-      title={quiz.title}
+      title={
+        <TextField
+          label="Quiz Title"
+          variant="outlined"
+          value={quiz.title}
+          onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
+          onBlur={() => saveQuiz({ ...quiz, updatedAt: new Date().toISOString() })}
+          size="small"
+          sx={{ width: 300 }}
+        />
+      }
       actions={
         <>
           <Button variant="outlined" onClick={handleGoHome} sx={{ mr: 1 }}>
