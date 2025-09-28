@@ -1,40 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Quiz Builder App
 
-## Getting Started
+A full-featured quiz builder and viewer built with **Next.js**, **Material UI**, and **@dnd-kit** for drag-and-drop.  
+The project allows you to create, edit, reorder, and publish quizzes — all stored locally in `localStorage` with the help of **axios-mock-adapter** for API mocking.
 
-First, run the development server:
+Live Demo: [Quiz Builder on Vercel](https://your-vercel-app-link.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Quiz Builder
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- Add different block types:
+  - Heading
+  - Question (single or multiple choice)
+  - Button
+  - Footer
+- Drag-and-drop to reorder blocks using **@dnd-kit**.
+- Delete blocks or edit their properties (text, options, multiple-choice toggle).
+- Save and publish quizzes.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### Quiz Viewer
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- View published quizzes with a responsive layout.
+- Interactive radio buttons or checkboxes for questions.
+- Free-text input option if no answers are provided.
+- Styled buttons and footers for user interaction.
 
-## Learn More
+### Data Management
 
-To learn more about Next.js, take a look at the following resources:
+- Quizzes are stored in **localStorage** (browser persistence).
+- Uses **axios-mock-adapter** to simulate backend API endpoints.
+- Full CRUD support (create, read, update, delete) for quizzes without a real backend.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+### Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js** – React framework with file-based routing
+- **Material UI (MUI)** – UI components and styling
+- **@dnd-kit** – drag-and-drop support
+- **Axios + axios-mock-adapter** – API layer and mocking
+- **localStorage** – lightweight data persistence
+- **TypeScript** – type safety
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Why These Choices
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+- **Next.js**: Built-in routing and seamless deployment with Vercel.
+- **Material UI**: Clean, modern UI with ready-to-use components.
+- **@dnd-kit**: Actively maintained drag-and-drop library compatible with React 19.
+- **Axios + Mock Adapter**: Simulates real API calls while storing data locally.
+- **localStorage**: Provides persistence without requiring a backend.
+- **Vercel**: Optimized deployment and preview environments.
+
+---

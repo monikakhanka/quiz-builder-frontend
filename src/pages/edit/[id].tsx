@@ -1,37 +1,73 @@
-import { useRouter } from "next/router";
-import PageLayout from "@/components/layouts/PageLayout";
-import { Button } from "@mui/material";
-
-import { Quiz } from "../../models/quiz";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { Box, Button } from "@mui/material";
+import PageLayout from "@/components/layouts/PageLayout";
+import { Quiz } from "@/models/quiz";
 import { api } from "@/api";
+import Canvas from "@/components/quizEditor/Canvas";
+import PropertiesPanel from "@/components/quizEditor/PropertiesPanel";
+import BlocksSidebar from "@/components/quizEditor/BlocksSideBar";
 
 export default function QuizEditorPage() {
   const router = useRouter();
   const { id } = router.query;
 
   const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+
   useEffect(() => {
-    if (id) {
-      api.get(`/quizzes/${id}`).then((res) => setQuiz(res.data));
-    }
+    if (!id) return;
+    api.get<Quiz>(`/quizzes/${id}`).then((res) => setQuiz(res.data));
   }, [id]);
 
-  const handleGoBack = () => {
-    router.push("/");
+  if (!quiz) return <p>Loading...</p>;
+
+  const saveQuiz = async (updated: Quiz) => {
+    const res = await api.put<Quiz>(`/quizzes/${updated.id}`, updated);
+    setQuiz(res.data);
   };
 
-  if (!quiz) return <p>Loading...</p>;
+  const handleSave = async () => {
+    await saveQuiz({ ...quiz, updatedAt: new Date().toISOString() });
+    alert("Quiz saved!");
+  };
+
+  const handlePublish = async () => {
+    const updated = { ...quiz, published: true, updatedAt: new Date().toISOString() };
+    await saveQuiz(updated);
+    alert("Quiz published!");
+    router.push(`/quiz/${quiz.id}`);
+  };
+
+  const handleGoHome = () => router.push("/");
+
   return (
     <PageLayout
-      title={`Editing: ${quiz.title}`}
+      title={quiz.title}
       actions={
-        <Button variant="contained" onClick={handleGoBack}>
-          HOME
-        </Button>
+        <>
+          <Button variant="outlined" onClick={handleGoHome} sx={{ mr: 1 }}>
+            Home
+          </Button>
+          <Button variant="outlined" onClick={handleSave} sx={{ mr: 1 }}>
+            Save
+          </Button>
+          <Button variant="contained" onClick={handlePublish}>
+            Publish
+          </Button>
+        </>
       }
     >
-      <p>Start Editing</p>
+      <Box display="flex" height="calc(100vh - 64px)">
+        <BlocksSidebar quiz={quiz} saveQuiz={saveQuiz} />
+        <Canvas
+          quiz={quiz}
+          saveQuiz={saveQuiz}
+          selectedBlockId={selectedBlockId}
+          setSelectedBlockId={setSelectedBlockId}
+        />
+        <PropertiesPanel quiz={quiz} saveQuiz={saveQuiz} selectedBlockId={selectedBlockId} />
+      </Box>
     </PageLayout>
   );
 }

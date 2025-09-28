@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 import { api } from "../../api";
 import { Quiz } from "../../models/quiz";
 import PageLayout from "@/components/layouts/PageLayout";
-import { Button } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
+import QuizContent from "@/components/quiz/QuizContent";
 
 export default function QuizRenderPage() {
   const router = useRouter();
@@ -12,44 +13,29 @@ export default function QuizRenderPage() {
 
   useEffect(() => {
     if (id) {
-      api.get(`/quizzes/${id}`).then((res) => setQuiz(res.data));
+      api.get<Quiz>(`/quizzes/${id}`).then((res) => setQuiz(res.data));
     }
   }, [id]);
 
   const handleGoBack = () => {
     router.push("/");
   };
+
   return (
     <PageLayout
       title="Quiz Viewer"
       actions={
         <Button variant="contained" onClick={handleGoBack}>
-          HOME
+          Home
         </Button>
       }
     >
       {!quiz ? (
-        <p>Loading...</p>
-      ) : !quiz.published ? (
-        <p>Not published yet</p>
+        <Box display="flex" justifyContent="center" mt={4}>
+          <CircularProgress />
+        </Box>
       ) : (
-        <>
-          <h1>{quiz.title}</h1>
-          {quiz.blocks.map((block) => {
-            switch (block.type) {
-              case "heading":
-                return <h2 key={block.id}>{block.content.text}</h2>;
-              case "question":
-                return <p key={block.id}>[Question Placeholder]</p>;
-              case "button":
-                return <button key={block.id}>{block.content.label}</button>;
-              case "footer":
-                return <small key={block.id}>{block.content.text}</small>;
-              default:
-                return null;
-            }
-          })}
-        </>
+        <QuizContent quiz={quiz} />
       )}
     </PageLayout>
   );
