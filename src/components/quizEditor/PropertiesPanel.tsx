@@ -1,4 +1,3 @@
-// src/components/quizEditor/PropertiesPanel.tsx
 import {
   Paper,
   Typography,
