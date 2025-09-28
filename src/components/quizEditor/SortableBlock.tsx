@@ -1,58 +1,144 @@
-import { Paper, Typography, IconButton, Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Paper, TextField, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Block } from "@/models/quiz";
+
+interface SortableBlockProps {
+  block: Block;
+  selected: boolean;
+  onSelect: () => void;
+  onDelete: () => void;
+  onUpdate: (updatedBlock: Partial<Block>) => void;
+}
 
 export default function SortableBlock({
   block,
   selected,
   onSelect,
   onDelete,
-}: {
-  block: Block;
-  selected: boolean;
-  onSelect: () => void;
-  onDelete: () => void;
-}) {
+  onUpdate,
+}: SortableBlockProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: block.id,
   });
 
-  return (
-    <Paper
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      onClick={onSelect}
-      sx={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        border: selected ? "2px solid" : "1px solid #ccc",
-        borderColor: selected ? "primary.main" : "divider",
-        p: 2,
-        mb: 2,
-        cursor: "pointer",
-        position: "relative",
-      }}
-    >
-      <IconButton
-        size="small"
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        sx={{ position: "absolute", top: 8, right: 8 }}
-      >
-        <Delete fontSize="small" />
-      </IconButton>
+  // Local state for editing
+  const [value, setValue] = useState(
+    block.type === "heading"
+      ? block.content.text || ""
+      : block.type === "question"
+        ? block.content.question || ""
+        : block.type === "button"
+          ? block.content.label || ""
+          : block.content.text || ""
+  );
 
-      {block.type === "heading" && <Typography variant="h6">{block.content.text}</Typography>}
-      {block.type === "question" && (
-        <Typography variant="body1">{block.content.question}</Typography>
-      )}
-      {block.type === "button" && <Button variant="outlined">{block.content.label}</Button>}
-      {block.type === "footer" && <Typography variant="caption">{block.content.text}</Typography>}
-    </Paper>
+  // Sync local state with parent updates
+  useEffect(() => {
+    if (block.type === "heading") setValue(block.content.text || "");
+    else if (block.type === "question") setValue(block.content.question || "");
+    else if (block.type === "button") setValue(block.content.label || "");
+    else setValue(block.content.text || "");
+  }, [block]);
+
+  const handleBlur = () => {
+    if (block.type === "heading") onUpdate({ content: { ...block.content, text: value } });
+    else if (block.type === "question")
+      onUpdate({ content: { ...block.content, question: value } });
+    else if (block.type === "button") onUpdate({ content: { ...block.content, label: value } });
+    else onUpdate({ content: { ...block.content, text: value } });
+  };
+
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 16 }}>
+      <Paper
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
+        onMouseDown={(e) => {
+          if ((e.target as HTMLElement).tagName !== "INPUT") onSelect();
+        }}
+        sx={{
+          transform: CSS.Transform.toString(transform),
+          transition,
+          border: selected ? "2px solid" : "1px solid transparent",
+          borderColor: selected ? "primary.main" : "transparent",
+          p: 2,
+          flex: 1,
+          cursor: "pointer",
+          position: "relative",
+        }}
+      >
+        {block.type === "heading" && (
+          <TextField
+            variant="standard"
+            fullWidth
+            size="small"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            sx={{
+              "& .MuiInput-underline:before, & .MuiInput-underline:after, & .MuiInput-underline:hover:not(.Mui-disabled):before":
+                { borderBottom: "none" },
+              padding: 0,
+            }}
+          />
+        )}
+
+        {block.type === "question" && (
+          <TextField
+            variant="standard"
+            fullWidth
+            size="small"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            sx={{
+              "& .MuiInput-underline:before, & .MuiInput-underline:after, & .MuiInput-underline:hover:not(.Mui-disabled):before":
+                { borderBottom: "none" },
+              padding: 0,
+            }}
+          />
+        )}
+
+        {block.type === "button" && (
+          <TextField
+            variant="standard"
+            fullWidth
+            size="small"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            sx={{
+              "& .MuiInput-underline:before, & .MuiInput-underline:after, & .MuiInput-underline:hover:not(.Mui-disabled):before":
+                { borderBottom: "none" },
+              padding: 0,
+            }}
+          />
+        )}
+
+        {block.type === "footer" && (
+          <TextField
+            variant="standard"
+            fullWidth
+            size="small"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            sx={{
+              "& .MuiInput-underline:before, & .MuiInput-underline:after, & .MuiInput-underline:hover:not(.Mui-disabled):before":
+                { borderBottom: "none" },
+              padding: 0,
+            }}
+          />
+        )}
+      </Paper>
+
+      <IconButton onClick={onDelete} sx={{ mt: 1 }}>
+        <Delete />
+      </IconButton>
+    </div>
   );
 }

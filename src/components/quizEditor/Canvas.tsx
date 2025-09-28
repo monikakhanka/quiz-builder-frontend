@@ -52,6 +52,7 @@ export default function Canvas({
               selected={block.id === selectedBlockId}
               onSelect={() => setSelectedBlockId(block.id)}
               onDelete={() => deleteBlock(block.id)}
+              onUpdate={() => {}}
             />
           ))}
         </SortableContext>

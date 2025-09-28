@@ -30,7 +30,7 @@ describe("QuizListPage", () => {
 
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({ push });
-    (api.get as jest.Mock).mockResolvedValue({ data: [] }); // ✅ mock .get
+    (api.get as jest.Mock).mockResolvedValue({ data: [] });
     (api.post as jest.Mock).mockResolvedValue({
       data: { id: "1", title: "New Quiz", updatedAt: new Date().toISOString() },
     });
