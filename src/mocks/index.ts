@@ -40,4 +40,14 @@ mock.onGet(/\/quizzes\/\d+/).reply((config) => {
   return quiz ? [200, quiz] : [404];
 });
 
+mock.onDelete(/\/quizzes\/\d+/).reply((config) => {
+  const id = config.url!.split("/").pop();
+  const idx = quizzes.findIndex((q) => q.id === id);
+  if (idx === -1) return [404, { message: "Quiz not found" }];
+
+  quizzes.splice(idx, 1);
+  saveQuizzes(quizzes);
+  return [200, { message: "Quiz deleted" }];
+});
+
 export default mock;

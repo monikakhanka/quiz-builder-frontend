@@ -33,11 +33,6 @@ export default function QuizListPage() {
       .catch(() => toast.error("Failed to load quizzes"));
   }, [setQuizzes]);
 
-  const saveToLocalStorage = (updatedQuizzes: Quiz[]) => {
-    setQuizzes(updatedQuizzes);
-    localStorage.setItem("quizzes", JSON.stringify(updatedQuizzes));
-  };
-
   const handleCreate = async () => {
     try {
       const res = await api.post<Quiz>("/quizzes", { title: "New Quiz" });
@@ -52,10 +47,20 @@ export default function QuizListPage() {
       toast.error("Failed to create quiz");
     }
   };
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this quiz?")) return;
-    const updated = quizzes.filter((q) => q.id !== id);
-    saveToLocalStorage(updated);
+
+    try {
+      await api.delete(`/quizzes/${id}`);
+
+      const updated = quizzes.filter((q) => q.id !== id);
+      setQuizzes(updated);
+      localStorage.setItem("quizzes", JSON.stringify(updated));
+
+      toast.success("Quiz deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete quiz");
+    }
   };
   return (
     <PageLayout
