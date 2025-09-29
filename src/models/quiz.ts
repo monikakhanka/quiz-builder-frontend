@@ -7,18 +7,18 @@ export interface HeadingBlock {
 }
 
 export type QuestionType = "multiple-choice" | "text";
-export interface QuestionBlock {
+export type QuestionBlock = {
   id: string;
   type: "question";
   content: {
-    questionType?: QuestionType;
     question: string;
+    questionType?: "multiple-choice" | "text";
     options?: string[];
+    multiple?: boolean;
     placeholder?: string;
     answer?: string | string[];
-    multiple?: boolean;
   };
-}
+};
 
 export interface ButtonBlock {
   id: string;
