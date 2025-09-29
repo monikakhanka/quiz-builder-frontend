@@ -10,7 +10,13 @@ export function useLocalStorage<T>(key: string, initial: T, schema?: ZodType<T>)
       const raw = localStorage.getItem(key);
       if (raw) {
         const parsed = JSON.parse(raw);
-        setValue(schema ? schema.parse(parsed) : parsed);
+        if (Array.isArray(parsed) && parsed.length === 0) {
+          setValue(initial);
+        } else {
+          setValue(schema ? schema.parse(parsed) : parsed);
+        }
+      } else {
+        setValue(initial);
       }
     } catch {
       localStorage.removeItem(key);
