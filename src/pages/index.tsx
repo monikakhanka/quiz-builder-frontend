@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import LocalDate from "@/components/ui/LocalDate";
 import PageLayout from "@/components/layouts/PageLayout";
+import sampleQuizzes from "@/mocks/demoQuiz";
 
 export default function QuizListPage() {
   const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes", []);
@@ -15,12 +16,28 @@ export default function QuizListPage() {
 
   useEffect(() => {
     if (quizzes.length === 0) {
-      api
-        .get<Quiz[]>("/quizzes")
-        .then((res) => setQuizzes(res.data))
-        .catch(() => toast.error("Failed to load quizzes"));
+      const stored = localStorage.getItem("quizzes");
+      if (!stored) {
+        setQuizzes(sampleQuizzes);
+        localStorage.setItem("quizzes", JSON.stringify(sampleQuizzes));
+      }
     }
-  }, [quizzes, setQuizzes]);
+    api
+      .get<Quiz[]>("/quizzes")
+      .then((res) => {
+        setQuizzes((prev) => {
+          const existingIds = new Set(prev.map((q) => q.id));
+          const merged = [
+            ...sampleQuizzes,
+            ...prev.filter((q) => !sampleQuizzes.some((s) => s.id === q.id)),
+            ...res.data.filter((q) => !existingIds.has(q.id)),
+          ];
+          localStorage.setItem("quizzes", JSON.stringify(merged));
+          return merged;
+        });
+      })
+      .catch(() => toast.error("Failed to load quizzes"));
+  }, [setQuizzes]);
 
   const saveToLocalStorage = (updatedQuizzes: Quiz[]) => {
     setQuizzes(updatedQuizzes);
@@ -30,7 +47,11 @@ export default function QuizListPage() {
   const handleCreate = async () => {
     try {
       const res = await api.post<Quiz>("/quizzes", { title: "New Quiz" });
-      setQuizzes((prev) => [...prev, res.data]);
+      setQuizzes((prev) => {
+        const updated = [...prev, res.data];
+        localStorage.setItem("quizzes", JSON.stringify(updated));
+        return updated;
+      });
       toast.success("Quiz created successfully");
       router.push(`/edit/${res.data.id}`);
     } catch {
