@@ -15,12 +15,6 @@ export default function QuizListPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (quizzes.length === 0) {
-      setQuizzes(sampleQuizzes);
-    }
-  }, [quizzes, setQuizzes]);
-
-  useEffect(() => {
     api
       .get<Quiz[]>("/quizzes")
       .then((res) => {
@@ -33,7 +27,7 @@ export default function QuizListPage() {
       .catch(() => toast.error("Failed to load quizzes"));
   }, [setQuizzes]);
 
-  const handleCreate = async () => {
+  const handleQuizCreate = async () => {
     try {
       const res = await api.post<Quiz>("/quizzes", { title: "New Quiz" });
       setQuizzes((prev) => {
@@ -66,7 +60,7 @@ export default function QuizListPage() {
     <PageLayout
       title="Quizzes"
       actions={
-        <Button variant="contained" onClick={handleCreate}>
+        <Button variant="contained" onClick={handleQuizCreate}>
           Create Quiz
         </Button>
       }
