@@ -53,14 +53,16 @@ export default function SortableBlock({
     <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 16 }}>
       <Paper
         ref={setNodeRef}
+        style={{
+          transform: CSS.Transform.toString(transform),
+          transition,
+        }}
         {...attributes}
         {...listeners}
         onMouseDown={(e) => {
           if ((e.target as HTMLElement).tagName !== "INPUT") onSelect();
         }}
         sx={{
-          transform: CSS.Transform.toString(transform),
-          transition,
           border: selected ? "2px solid" : "1px solid transparent",
           borderColor: selected ? "primary.main" : "transparent",
           p: 2,

@@ -7,7 +7,7 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { Quiz, Block, QuestionType } from "@/models/quiz";
+import { Quiz, Block } from "@/models/quiz";
 
 export default function BlocksSidebar({
   quiz,
@@ -16,7 +16,7 @@ export default function BlocksSidebar({
   quiz: Quiz;
   saveQuiz: (q: Quiz) => void;
 }) {
-  const addBlock = (type: Block["type"], questionType?: QuestionType, multiple?: boolean) => {
+  const addBlock = (type: Block["type"]) => {
     const newBlock: Block =
       type === "heading"
         ? { id: crypto.randomUUID(), type: "heading", content: { text: "New Heading" } }
@@ -25,12 +25,10 @@ export default function BlocksSidebar({
               id: crypto.randomUUID(),
               type: "question",
               content: {
+                questionType: "text",
                 question: "Question",
-                questionType: questionType || "multiple-choice",
-                options: questionType === "multiple-choice" ? ["Option 1"] : undefined,
-                multiple: questionType === "multiple-choice" ? (multiple ?? false) : undefined,
-                placeholder: questionType === "text" ? "Enter your answer..." : undefined,
-                answer: questionType === "text" ? "" : multiple ? [] : "",
+                placeholder: "Enter your answer...",
+                answer: "",
               },
             }
           : type === "button"
