@@ -24,7 +24,6 @@ export default function SortableBlock({
     id: block.id,
   });
 
-  // Local state for editing
   const [value, setValue] = useState(
     block.type === "heading"
       ? block.content.text || ""
@@ -35,7 +34,6 @@ export default function SortableBlock({
           : block.content.text || ""
   );
 
-  // Sync local state with parent updates
   useEffect(() => {
     if (block.type === "heading") setValue(block.content.text || "");
     else if (block.type === "question") setValue(block.content.question || "");
