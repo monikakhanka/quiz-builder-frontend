@@ -13,17 +13,19 @@ import SortableBlock from "./SortableBlock";
 import { Block, Quiz } from "@/models/quiz";
 import { useEffect, useState } from "react";
 
-export default function Canvas({
-  quiz,
-  saveQuiz,
-  selectedBlockId,
-  setSelectedBlockId,
-}: {
+type CanvasProps = {
   quiz: Quiz;
-  saveQuiz: (q: Quiz) => void;
+  onQuizSave: (q: Quiz) => void;
   selectedBlockId: string | null;
   setSelectedBlockId: (id: string | null) => void;
-}) {
+};
+
+export default function Canvas({
+  quiz,
+  onQuizSave,
+  selectedBlockId,
+  setSelectedBlockId,
+}: CanvasProps) {
   const sensors = useSensors(useSensor(PointerSensor));
   const [blocks, setBlocks] = useState<Block[]>(quiz.blocks);
 
@@ -39,7 +41,7 @@ export default function Canvas({
     const newIndex = quiz.blocks.findIndex((b) => b.id === over.id);
 
     if (oldIndex !== newIndex) {
-      saveQuiz({ ...quiz, blocks: arrayMove(quiz.blocks, oldIndex, newIndex) });
+      onQuizSave({ ...quiz, blocks: arrayMove(quiz.blocks, oldIndex, newIndex) });
     }
   };
 
@@ -50,12 +52,12 @@ export default function Canvas({
       const newIndex = quiz.blocks.findIndex((b) => b.id === over.id);
       const newBlocks = arrayMove(blocks, oldIndex, newIndex);
       setBlocks(newBlocks);
-      saveQuiz({ ...quiz, blocks: newBlocks });
+      onQuizSave({ ...quiz, blocks: newBlocks });
     }
   };
 
   const deleteBlock = (blockId: string) => {
-    saveQuiz({ ...quiz, blocks: quiz.blocks.filter((b) => b.id !== blockId) });
+    onQuizSave({ ...quiz, blocks: quiz.blocks.filter((b) => b.id !== blockId) });
     if (selectedBlockId === blockId) setSelectedBlockId(null);
   };
 
