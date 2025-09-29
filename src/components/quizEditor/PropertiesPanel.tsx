@@ -10,19 +10,21 @@ import {
 } from "@mui/material";
 import { Quiz, Block, HeadingBlock, QuestionBlock, ButtonBlock, FooterBlock } from "@/models/quiz";
 
+type PropertiesPanelProps = {
+  quiz: Quiz;
+  selectedBlockId: string | null;
+  onQuizChange: (q: Quiz) => void;
+};
+
 export default function PropertiesPanel({
   quiz,
-  saveQuiz,
   selectedBlockId,
-}: {
-  quiz: Quiz;
-  saveQuiz: (q: Quiz) => void;
-  selectedBlockId: string | null;
-}) {
+  onQuizChange,
+}: PropertiesPanelProps) {
   const selectedBlock = quiz.blocks.find((b) => b.id === selectedBlockId) || null;
 
-  const updateBlock = (blockId: string, newBlock: Block) => {
-    saveQuiz({
+  const handleBlockUpdate = (blockId: string, newBlock: Block) => {
+    onQuizChange({
       ...quiz,
       blocks: quiz.blocks.map((b) => (b.id === blockId ? newBlock : b)),
     });
@@ -31,7 +33,13 @@ export default function PropertiesPanel({
   return (
     <Paper
       elevation={1}
-      sx={{ width: 340, p: 2, flexShrink: 0, display: "flex", flexDirection: "column" }}
+      sx={{
+        width: 340,
+        p: 2,
+        flexShrink: 0,
+        display: "flex",
+        flexDirection: "column",
+      }}
     >
       <Typography variant="subtitle1" gutterBottom>
         Properties
@@ -46,7 +54,7 @@ export default function PropertiesPanel({
           label="Heading Text"
           value={selectedBlock.content.text}
           onChange={(e) =>
-            updateBlock(selectedBlock.id, {
+            handleBlockUpdate(selectedBlock.id, {
               ...selectedBlock,
               content: { text: e.target.value },
             } as HeadingBlock)
@@ -61,7 +69,7 @@ export default function PropertiesPanel({
             label="Question Text"
             value={selectedBlock.content.question}
             onChange={(e) =>
-              updateBlock(selectedBlock.id, {
+              handleBlockUpdate(selectedBlock.id, {
                 ...selectedBlock,
                 content: { ...selectedBlock.content, question: e.target.value },
               } as QuestionBlock)
@@ -77,7 +85,7 @@ export default function PropertiesPanel({
               onChange={(e) => {
                 const newOptions = [...(selectedBlock.content.options || [])];
                 newOptions[i] = e.target.value;
-                updateBlock(selectedBlock.id, {
+                handleBlockUpdate(selectedBlock.id, {
                   ...selectedBlock,
                   content: { ...selectedBlock.content, options: newOptions },
                 } as QuestionBlock);
@@ -88,7 +96,7 @@ export default function PropertiesPanel({
           <Button
             size="small"
             onClick={() =>
-              updateBlock(selectedBlock.id, {
+              handleBlockUpdate(selectedBlock.id, {
                 ...selectedBlock,
                 content: {
                   ...selectedBlock.content,
@@ -104,9 +112,12 @@ export default function PropertiesPanel({
               <Checkbox
                 checked={selectedBlock.content.multiple || false}
                 onChange={(e) =>
-                  updateBlock(selectedBlock.id, {
+                  handleBlockUpdate(selectedBlock.id, {
                     ...selectedBlock,
-                    content: { ...selectedBlock.content, multiple: e.target.checked },
+                    content: {
+                      ...selectedBlock.content,
+                      multiple: e.target.checked,
+                    },
                   } as QuestionBlock)
                 }
               />
@@ -122,7 +133,7 @@ export default function PropertiesPanel({
           label="Button Label"
           value={selectedBlock.content.label}
           onChange={(e) =>
-            updateBlock(selectedBlock.id, {
+            handleBlockUpdate(selectedBlock.id, {
               ...selectedBlock,
               content: { label: e.target.value },
             } as ButtonBlock)
@@ -136,7 +147,7 @@ export default function PropertiesPanel({
           label="Footer Text"
           value={selectedBlock.content.text}
           onChange={(e) =>
-            updateBlock(selectedBlock.id, {
+            handleBlockUpdate(selectedBlock.id, {
               ...selectedBlock,
               content: { text: e.target.value },
             } as FooterBlock)

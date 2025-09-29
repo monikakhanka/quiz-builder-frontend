@@ -7,6 +7,7 @@ export interface HeadingBlock {
 }
 
 export type QuestionType = "multiple-choice" | "text";
+
 export type QuestionBlock = {
   id: string;
   type: "question";
@@ -79,7 +80,6 @@ export const FooterBlockSchema = z.object({
   }),
 });
 
-// Union schema for all blocks
 export const BlockSchema = z.union([
   HeadingBlockSchema,
   QuestionBlockSchema,
@@ -97,5 +97,4 @@ export const QuizSchema = z.object({
 
 export const QuizzesSchema = z.array(QuizSchema);
 
-// Infer type from schema (alternative to manual interfaces, optional)
 export type QuizFromSchema = z.infer<typeof QuizSchema>;

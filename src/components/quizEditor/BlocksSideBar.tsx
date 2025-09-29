@@ -9,13 +9,12 @@ import {
 } from "@mui/material";
 import { Quiz, Block } from "@/models/quiz";
 
-export default function BlocksSidebar({
-  quiz,
-  saveQuiz,
-}: {
+type BlocksSideBarProps = {
   quiz: Quiz;
-  saveQuiz: (q: Quiz) => void;
-}) {
+  onQuizSave: (q: Quiz) => void;
+};
+
+export default function BlocksSidebar({ quiz, onQuizSave }: BlocksSideBarProps) {
   const addBlock = (type: Block["type"]) => {
     const newBlock: Block =
       type === "heading"
@@ -34,7 +33,7 @@ export default function BlocksSidebar({
           : type === "button"
             ? { id: crypto.randomUUID(), type: "button", content: { label: "Click Me" } }
             : { id: crypto.randomUUID(), type: "footer", content: { text: "Footer text" } };
-    saveQuiz({ ...quiz, blocks: [...quiz.blocks, newBlock] });
+    onQuizSave({ ...quiz, blocks: [...quiz.blocks, newBlock] });
   };
 
   return (

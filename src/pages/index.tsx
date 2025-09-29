@@ -47,7 +47,7 @@ export default function QuizListPage() {
       toast.error("Failed to create quiz");
     }
   };
-  const handleDelete = async (id: string) => {
+  const handleQuizDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this quiz?")) return;
 
     try {
@@ -92,7 +92,7 @@ export default function QuizListPage() {
                 <Button
                   color="error"
                   variant="text"
-                  onClick={() => handleDelete(quiz.id)}
+                  onClick={() => handleQuizDelete(quiz.id)}
                   sx={{
                     textTransform: "none",
                     p: 0,
