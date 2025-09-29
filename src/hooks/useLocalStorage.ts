@@ -1,24 +1,29 @@
 import { useEffect, useState } from "react";
+import { ZodType } from "zod";
 
-export function useLocalStorage<T>(key: string, initialValue: T) {
-  const [value, setValue] = useState<T>(initialValue);
-
-  const [hydrated, setHydrated] = useState(false);
+export function useLocalStorage<T>(key: string, initial: T, schema?: ZodType<T>) {
+  const [value, setValue] = useState<T>(initial);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(key);
-    if (stored) {
-      setValue(JSON.parse(stored));
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setValue(schema ? schema.parse(parsed) : parsed);
+      }
+    } catch {
+      localStorage.removeItem(key);
+      setValue(initial);
     }
-
-    setHydrated(true);
-  }, [key]);
+    setIsHydrated(true);
+  }, [key, schema, initial]);
 
   useEffect(() => {
-    if (hydrated) {
+    if (isHydrated) {
       localStorage.setItem(key, JSON.stringify(value));
     }
-  }, [key, value, hydrated]);
+  }, [isHydrated, key, value]);
 
   return [value, setValue] as const;
 }

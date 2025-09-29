@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { api } from "../api";
-import { Quiz } from "../models/quiz";
+import { Quiz, QuizzesSchema } from "../models/quiz";
 import Link from "next/link";
 import { Button, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { toast } from "react-toastify";
@@ -11,28 +11,22 @@ import PageLayout from "@/components/layouts/PageLayout";
 import sampleQuizzes from "@/mocks/demoQuiz";
 
 export default function QuizListPage() {
-  const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes", []);
+  const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes", sampleQuizzes, QuizzesSchema);
   const router = useRouter();
 
   useEffect(() => {
     if (quizzes.length === 0) {
-      const stored = localStorage.getItem("quizzes");
-      if (!stored) {
-        setQuizzes(sampleQuizzes);
-        localStorage.setItem("quizzes", JSON.stringify(sampleQuizzes));
-      }
+      setQuizzes(sampleQuizzes);
     }
+  }, [quizzes, setQuizzes]);
+
+  useEffect(() => {
     api
       .get<Quiz[]>("/quizzes")
       .then((res) => {
         setQuizzes((prev) => {
           const existingIds = new Set(prev.map((q) => q.id));
-          const merged = [
-            ...sampleQuizzes,
-            ...prev.filter((q) => !sampleQuizzes.some((s) => s.id === q.id)),
-            ...res.data.filter((q) => !existingIds.has(q.id)),
-          ];
-          localStorage.setItem("quizzes", JSON.stringify(merged));
+          const merged = [...prev, ...res.data.filter((q) => !existingIds.has(q.id))];
           return merged;
         });
       })
