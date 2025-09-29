@@ -61,14 +61,23 @@ export default function QuizEditorPage() {
   };
 
   const handleQuizPublish = async () => {
-    const updated = {
-      ...quiz,
-      published: true,
-      updatedAt: new Date().toISOString(),
-    };
-    await handleQuizChange(updated);
-    alert("Quiz published!");
-    router.push(`/quiz/${quiz.id}`);
+    try {
+      const res = await api.put<Quiz>(`/quizzes/${quiz.id}`, {
+        ...quiz,
+        published: true,
+        updatedAt: new Date().toISOString(),
+      });
+      setQuiz(res.data);
+
+      const quizzes = JSON.parse(localStorage.getItem("quizzes") || "[]");
+      const newQuizzes = quizzes.map((q: Quiz) => (q.id === quiz.id ? res.data : q));
+      localStorage.setItem("quizzes", JSON.stringify(newQuizzes));
+
+      alert("Quiz published!");
+      router.push(`/quiz/${quiz.id}`);
+    } catch (error) {
+      alert("Failed to publish quiz.");
+    }
   };
 
   const handleGoHome = () => router.push("/");

@@ -76,53 +76,77 @@ export default function PropertiesPanel({
             }
             sx={{ mb: 2 }}
           />
-          {selectedBlock.content.options?.map((opt, i) => (
-            <TextField
-              key={i}
-              fullWidth
-              label={`Option ${i + 1}`}
-              value={opt}
-              onChange={(e) => {
-                const newOptions = [...(selectedBlock.content.options || [])];
-                newOptions[i] = e.target.value;
-                handleBlockUpdate(selectedBlock.id, {
-                  ...selectedBlock,
-                  content: { ...selectedBlock.content, options: newOptions },
-                } as QuestionBlock);
-              }}
-              sx={{ mb: 1 }}
-            />
-          ))}
-          <Button
-            size="small"
-            onClick={() =>
-              handleBlockUpdate(selectedBlock.id, {
-                ...selectedBlock,
-                content: {
-                  ...selectedBlock.content,
-                  options: [...(selectedBlock.content.options || []), "New Option"],
-                },
-              } as QuestionBlock)
-            }
-          >
-            + Add Option
-          </Button>
+          {selectedBlock.content.questionType === "text" ? null : (
+            <>
+              {selectedBlock.content.options?.map((opt, i) => (
+                <TextField
+                  key={i}
+                  fullWidth
+                  label={`Option ${i + 1}`}
+                  value={opt}
+                  onChange={(e) => {
+                    const newOptions = [...(selectedBlock.content.options || [])];
+                    newOptions[i] = e.target.value;
+                    handleBlockUpdate(selectedBlock.id, {
+                      ...selectedBlock,
+                      content: { ...selectedBlock.content, options: newOptions },
+                    } as QuestionBlock);
+                  }}
+                  sx={{ mb: 1 }}
+                />
+              ))}
+              <Button
+                size="small"
+                onClick={() =>
+                  handleBlockUpdate(selectedBlock.id, {
+                    ...selectedBlock,
+                    content: {
+                      ...selectedBlock.content,
+                      options: [...(selectedBlock.content.options || []), "New Option"],
+                    },
+                  } as QuestionBlock)
+                }
+              >
+                + Add Option
+              </Button>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedBlock.content.multiple || false}
+                    onChange={(e) =>
+                      handleBlockUpdate(selectedBlock.id, {
+                        ...selectedBlock,
+                        content: {
+                          ...selectedBlock.content,
+                          multiple: e.target.checked,
+                        },
+                      } as QuestionBlock)
+                    }
+                  />
+                }
+                label="Allow multiple answers"
+              />
+            </>
+          )}
+
           <FormControlLabel
             control={
               <Checkbox
-                checked={selectedBlock.content.multiple || false}
+                checked={selectedBlock.content.questionType === "text"}
                 onChange={(e) =>
                   handleBlockUpdate(selectedBlock.id, {
                     ...selectedBlock,
                     content: {
                       ...selectedBlock.content,
-                      multiple: e.target.checked,
+                      questionType: e.target.checked ? "text" : "multiple-choice",
+                      options: e.target.checked ? undefined : selectedBlock.content.options || [],
+                      multiple: e.target.checked ? false : selectedBlock.content.multiple,
                     },
                   } as QuestionBlock)
                 }
               />
             }
-            label="Allow multiple answers"
+            label="Allow text answer"
           />
         </Box>
       )}
