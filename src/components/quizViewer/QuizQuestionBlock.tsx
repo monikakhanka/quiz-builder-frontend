@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 
 export default function QuizQuestionBlock({ block }: { block: QuestionBlock }) {
+  const { questionType, options, multiple, placeholder } = block.content;
   return (
     <Card sx={{ mb: 3 }}>
       <CardContent>
@@ -17,16 +18,21 @@ export default function QuizQuestionBlock({ block }: { block: QuestionBlock }) {
           {block.content.question}
         </Typography>
 
-        {block.content.options?.map((opt, i) =>
-          block.content.multiple ? (
-            <FormControlLabel key={i} control={<Checkbox />} label={opt} />
-          ) : (
-            <FormControlLabel key={i} control={<Radio />} label={opt} />
-          )
-        )}
-
-        {!block.content.options?.length && (
-          <TextField fullWidth size="small" placeholder="Type your answer..." sx={{ mt: 2 }} />
+        {questionType === "multiple-choice" &&
+          options?.map((opt, i) =>
+            multiple ? (
+              <FormControlLabel key={i} control={<Checkbox />} label={opt} />
+            ) : (
+              <FormControlLabel key={i} control={<Radio name={block.id} />} label={opt} />
+            )
+          )}
+        {questionType === "text" && (
+          <TextField
+            fullWidth
+            size="small"
+            placeholder={placeholder || "Type your answer..."}
+            sx={{ mt: 2 }}
+          />
         )}
       </CardContent>
     </Card>

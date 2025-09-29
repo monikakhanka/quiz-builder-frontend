@@ -3,12 +3,17 @@ export interface HeadingBlock {
   type: "heading";
   content: { text: string };
 }
+
+export type QuestionType = "multiple-choice" | "text";
 export interface QuestionBlock {
   id: string;
   type: "question";
   content: {
+    questionType?: QuestionType;
     question: string;
     options?: string[];
+    placeholder?: string;
+    answer?: string | string[];
     multiple?: boolean;
   };
 }

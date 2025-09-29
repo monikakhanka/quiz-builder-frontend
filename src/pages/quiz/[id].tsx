@@ -11,11 +11,24 @@ export default function QuizRenderPage() {
   const { id } = router.query;
   const [quiz, setQuiz] = useState<Quiz | null>(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    if (id) {
-      api.get<Quiz>(`/quizzes/${id}`).then((res) => setQuiz(res.data));
-    }
-  }, [id]);
+    if (!id) return;
+
+    setLoading(true);
+    api
+      .get<Quiz>(`/quizzes/${id}`)
+      .then((res) => {
+        if (!res.data) {
+          router.replace("/404");
+        } else {
+          setQuiz(res.data);
+        }
+      })
+      .catch(() => router.replace("/404"))
+      .finally(() => setLoading(false));
+  }, [id, router]);
 
   const handleGoBack = () => {
     router.push("/");
