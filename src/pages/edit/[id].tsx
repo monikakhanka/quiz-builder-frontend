@@ -15,10 +15,26 @@ export default function QuizEditorPage() {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (!id) return;
-    api.get<Quiz>(`/quizzes/${id}`).then((res) => setQuiz(res.data));
-  }, [id]);
+    setLoading(true);
+
+    api
+      .get<Quiz>(`/quizzes/${id}`)
+      .then((res) => {
+        if (!res.data) {
+          router.replace("/404");
+        } else {
+          setQuiz(res.data);
+        }
+      })
+      .catch(() => {
+        router.replace("/404");
+      })
+      .finally(() => setLoading(false));
+  }, [id, router]);
 
   if (!quiz) return <p>Loading...</p>;
 
