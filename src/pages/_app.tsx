@@ -1,5 +1,4 @@
 import type { AppProps } from "next/app";
-import "../mocks";
 
 import { ToastContainer } from "react-toastify";
 import { CssBaseline } from "@mui/material";
