@@ -11,7 +11,7 @@ export default function QuizRenderPage() {
   const { id } = router.query;
   const [quiz, setQuiz] = useState<Quiz | null>(null);
 
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;

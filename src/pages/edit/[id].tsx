@@ -15,7 +15,7 @@ export default function QuizEditorPage() {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
 
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
@@ -55,7 +55,7 @@ export default function QuizEditorPage() {
       localStorage.setItem("quizzes", JSON.stringify(newQuizzes));
       alert("Quiz saved!");
       router.push("/");
-    } catch (error) {
+    } catch {
       alert("Failed to save quiz.");
     }
   };
@@ -75,7 +75,7 @@ export default function QuizEditorPage() {
 
       alert("Quiz published!");
       router.push(`/quiz/${quiz.id}`);
-    } catch (error) {
+    } catch {
       alert("Failed to publish quiz.");
     }
   };

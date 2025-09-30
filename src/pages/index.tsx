@@ -52,7 +52,7 @@ export default function QuizListPage() {
       localStorage.setItem("quizzes", JSON.stringify(updated));
 
       toast.success("Quiz deleted successfully");
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete quiz");
     }
   };
@@ -74,43 +74,51 @@ export default function QuizListPage() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {quizzes.map((quiz) => (
-            <TableRow key={quiz.id}>
-              <TableCell>{quiz.title}</TableCell>
-              <TableCell>
-                <LocalDate date={quiz.updatedAt} />
-              </TableCell>
-              <TableCell>
-                <Link href={`/edit/${quiz.id}`}>Edit</Link> |{" "}
-                <Link href={`/quiz/${quiz.id}`}>View</Link> |
-                <Button
-                  color="error"
-                  variant="text"
-                  onClick={() => handleQuizDelete(quiz.id)}
-                  sx={{
-                    textTransform: "none",
-                    p: 0,
-                    minWidth: "auto",
-                    ml: 1,
-                    background: "none",
-                    textDecoration: "underline",
-                    "&:hover": {
-                      background: "none",
-                      textDecoration: "underline",
-                    },
-                    "&:active": {
-                      background: "none",
-                    },
-                    "&:focus": {
-                      background: "none",
-                    },
-                  }}
-                >
-                  Delete
-                </Button>
+          {quizzes.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={3} align="center" sx={{ borderBottom: "none" }}>
+                No data to display
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            quizzes.map((quiz) => (
+              <TableRow key={quiz.id}>
+                <TableCell>{quiz.title}</TableCell>
+                <TableCell>
+                  <LocalDate date={quiz.updatedAt} />
+                </TableCell>
+                <TableCell>
+                  <Link href={`/edit/${quiz.id}`}>Edit</Link> |{" "}
+                  <Link href={`/quiz/${quiz.id}`}>View</Link> |
+                  <Button
+                    color="error"
+                    variant="text"
+                    onClick={() => handleQuizDelete(quiz.id)}
+                    sx={{
+                      textTransform: "none",
+                      p: 0,
+                      minWidth: "auto",
+                      ml: 1,
+                      background: "none",
+                      textDecoration: "underline",
+                      "&:hover": {
+                        background: "none",
+                        textDecoration: "underline",
+                      },
+                      "&:active": {
+                        background: "none",
+                      },
+                      "&:focus": {
+                        background: "none",
+                      },
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </PageLayout>
