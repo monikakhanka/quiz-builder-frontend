@@ -55,6 +55,15 @@ Live Demo: [Quiz Builder on Vercel](https://quiz-builder-app-five.vercel.app)
 
 ---
 
+## Known Issues
+
+- **Drag & Drop for Quiz Blocks**
+
+Currently, the application does not support drag-and-drop functionality for adding quiz blocks. Blocks can only be added by clicking on the block name.  
+Planned improvements include implementing drag-and-drop for adding blocks.
+
+---
+
 ## Why These Choices
 
 - **Next.js**: Built-in routing and seamless deployment with Vercel.
