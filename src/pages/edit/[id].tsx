@@ -43,16 +43,14 @@ export default function QuizEditorPage() {
   };
 
   const handleQuizSave = async () => {
+    if (!quiz) return;
     try {
-      const res = await api.put<Quiz>(`/quizzes/${quiz.id}`, {
+      const res = await api.patch<Quiz>(`/quizzes/${quiz.id}`, {
         ...quiz,
         updatedAt: new Date().toISOString(),
       });
       setQuiz(res.data);
 
-      const quizzes = JSON.parse(localStorage.getItem("quizzes") || "[]");
-      const newQuizzes = quizzes.map((q: Quiz) => (q.id === quiz.id ? res.data : q));
-      localStorage.setItem("quizzes", JSON.stringify(newQuizzes));
       alert("Quiz saved!");
       router.push("/");
     } catch {
@@ -61,21 +59,19 @@ export default function QuizEditorPage() {
   };
 
   const handleQuizPublish = async () => {
+    if (!quiz) return;
     try {
-      const res = await api.put<Quiz>(`/quizzes/${quiz.id}`, {
+      const res = await api.patch<Quiz>(`/quizzes/${quiz.id}`, {
         ...quiz,
         published: true,
         updatedAt: new Date().toISOString(),
       });
       setQuiz(res.data);
 
-      const quizzes = JSON.parse(localStorage.getItem("quizzes") || "[]");
-      const newQuizzes = quizzes.map((q: Quiz) => (q.id === quiz.id ? res.data : q));
-      localStorage.setItem("quizzes", JSON.stringify(newQuizzes));
-
       alert("Quiz published!");
       router.push(`/quiz/${quiz.id}`);
-    } catch {
+    } catch (error) {
+      console.error(error);
       alert("Failed to publish quiz.");
     }
   };

@@ -1,40 +1,35 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../api";
 import { Quiz, QuizzesSchema } from "../models/quiz";
 import Link from "next/link";
 import { Button, Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
 import LocalDate from "@/components/ui/LocalDate";
 import PageLayout from "@/components/layouts/PageLayout";
-import sampleQuizzes from "@/mocks/demoQuiz";
 
 export default function QuizListPage() {
-  const [quizzes, setQuizzes] = useLocalStorage<Quiz[]>("quizzes", sampleQuizzes, QuizzesSchema);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const router = useRouter();
 
   useEffect(() => {
     api
-      .get<Quiz[]>("/quizzes")
+      .get("/quizzes")
       .then((res) => {
-        setQuizzes((prev) => {
-          const existingIds = new Set(prev.map((q) => q.id));
-          const merged = [...prev, ...res.data.filter((q) => !existingIds.has(q.id))];
-          return merged;
-        });
+        const parsed = QuizzesSchema.parse(res.data);
+        setQuizzes(parsed);
       })
       .catch(() => toast.error("Failed to load quizzes"));
-  }, [setQuizzes]);
+  }, []);
 
   const handleQuizCreate = async () => {
     try {
-      const res = await api.post<Quiz>("/quizzes", { title: "New Quiz" });
-      setQuizzes((prev) => {
-        const updated = [...prev, res.data];
-        localStorage.setItem("quizzes", JSON.stringify(updated));
-        return updated;
+      const res = await api.post<Quiz>("/quizzes", {
+        title: "New Quiz",
+        blocks: [],
+        published: false,
       });
+      setQuizzes((prev) => [...prev, res.data]);
       toast.success("Quiz created successfully");
       router.push(`/edit/${res.data.id}`);
     } catch {
@@ -46,11 +41,7 @@ export default function QuizListPage() {
 
     try {
       await api.delete(`/quizzes/${id}`);
-
-      const updated = quizzes.filter((q) => q.id !== id);
-      setQuizzes(updated);
-      localStorage.setItem("quizzes", JSON.stringify(updated));
-
+      setQuizzes((prev) => prev.filter((q) => q.id !== id));
       toast.success("Quiz deleted successfully");
     } catch {
       toast.error("Failed to delete quiz");
