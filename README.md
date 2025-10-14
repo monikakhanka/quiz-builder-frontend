@@ -1,7 +1,7 @@
 # Quiz Builder App
 
-A full-featured quiz builder and viewer built with **Next.js**, **Material UI**, and **@dnd-kit** for drag-and-drop.  
-The project allows you to create, edit, reorder, and publish quizzes — all stored locally in `localStorage` with the help of **axios-mock-adapter** for API mocking.
+A full-featured quiz builder and viewer built with **Next.js**, **Nest.js**, **Material UI**, and **@dnd-kit** for drag-and-drop.  
+The project allows you to create, edit, reorder, and publish quizzes — all stored in Postgresql.
 
 Live Demo: [Quiz Builder on Vercel](https://quiz-builder-frontend-liard.vercel.app/)
 
